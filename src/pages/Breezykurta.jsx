@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
 import { useCart } from '../context/CartContext'
+import { useWishlist } from '../context/WishlistContext'
 import { products } from '../data/products'
 import { loadScript } from '../utils/razorpay'
+import { FaHeart, FaRegHeart } from 'react-icons/fa'
 
 const Breezykurta = () => {
   const [selectedSize, setSelectedSize] = useState('M')
   const [showQuickView, setShowQuickView] = useState(false)
   const { addToCart } = useCart()
+  const { wishlistItems, addToWishlist, removeFromWishlist } = useWishlist()
   const [paymentLoading, setPaymentLoading] = useState(false)
 
   const [selectedProduct, setSelectedProduct] = useState(products[0])
@@ -38,7 +41,30 @@ const Breezykurta = () => {
                 alt={item.name}
                 className="w-full h-48 sm:h-56 md:h-64 object-cover"
               />
-              <div className="absolute top-2 right-2">
+              <div className="absolute top-2 right-2 flex gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const isInWishlist = wishlistItems.some(wishlistItem => wishlistItem.id === item.id);
+                    if (isInWishlist) {
+                      removeFromWishlist(item.id);
+                    } else {
+                      addToWishlist({
+                        id: item.id,
+                        name: item.name,
+                        price: item.sizes['M'].price,
+                        image: item.image
+                      });
+                    }
+                  }}
+                  className="bg-white p-2 rounded-full shadow-md hover:bg-gray-50 transition-colors duration-300"
+                >
+                  {wishlistItems.some(wishlistItem => wishlistItem.id === item.id) ? (
+                    <FaHeart className="w-4 h-4 text-[#e80071]" />
+                  ) : (
+                    <FaRegHeart className="w-4 h-4 text-gray-600" />
+                  )}
+                </button>
                 <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
                   {item.sizes['M'].discount}
                 </span>

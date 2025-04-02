@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useCart } from '../context/CartContext'
+import { useWishlist } from '../context/WishlistContext'
+import { FaHeart, FaRegHeart } from 'react-icons/fa'
 
 const Floraldresses = () => {
   const { addToCart } = useCart()
+  const { wishlistItems, addToWishlist, removeFromWishlist } = useWishlist()
   const [dresses, setDresses] = useState([
     {
       id: 1,
@@ -277,8 +280,27 @@ const Floraldresses = () => {
                   >
                     Add to Cart
                   </button>
-                  <button className="w-10 flex items-center justify-center bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors duration-300">
-                    🤍
+                  <button
+                    onClick={() => {
+                      const isInWishlist = wishlistItems.some(item => item.id === dress.id)
+                      if (isInWishlist) {
+                        removeFromWishlist(dress.id)
+                      } else {
+                        addToWishlist({
+                          id: dress.id,
+                          name: dress.name,
+                          price: dress.price,
+                          image: dress.image
+                        })
+                      }
+                    }}
+                    className="w-10 flex items-center justify-center bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors duration-300"
+                  >
+                    {wishlistItems.some(item => item.id === dress.id) ? (
+                      <FaHeart className="w-4 h-4 text-[#e80071]" />
+                    ) : (
+                      <FaRegHeart className="w-4 h-4 text-gray-600" />
+                    )}
                   </button>
                 </div>
               </div>

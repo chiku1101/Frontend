@@ -9,7 +9,9 @@ import Floraldresses from './pages/Floraldresses'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 import Breezykurta from './pages/Breezykurta'
+import Wishlist from './pages/Wishlist'
 import { CartProvider } from './context/CartContext'
+import { WishlistProvider } from './context/WishlistContext'
 import { AuthProvider } from './context/AuthContext'
 import ErrorBoundary from './components/ErrorBoundary'
 
@@ -18,18 +20,21 @@ function App() {
     <ErrorBoundary>
       <AuthProvider>
         <CartProvider>
-          <div className="min-h-screen">
-            <CustomCursor />
-            <ScrollToTop />
-            <Navbar />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/women" element={<Floraldresses />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/breezy-kurta" element={<Breezykurta />} />
-            </Routes>
-          </div>
+          <WishlistProvider>
+            <div className="min-h-screen">
+              <CustomCursor />
+              <ScrollToTop />
+              <Navbar />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/women" element={<Floraldresses />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/breezy-kurta" element={<Breezykurta />} />
+                <Route path="/wishlist" element={<Wishlist />} />
+              </Routes>
+            </div>
+          </WishlistProvider>
         </CartProvider>
       </AuthProvider>
     </ErrorBoundary>
