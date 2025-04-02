@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+* {
+  cursor: none;
+}
+
+.custom-cursor {
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.custom-cursor.hover {
+  background-color: #fff;
+  mix-blend-mode: difference;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
