@@ -7,6 +7,14 @@ const CustomCursor = () => {
   const targetRef = useRef({ x: 0, y: 0 })
   const rafRef = useRef(null)
 
+  // Check if it's a mobile device on initial load
+  const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  )
+
+  // If mobile device, don't render the cursor
+  if (isMobileDevice) return null
+
   useEffect(() => {
     const lerp = (start, end, factor) => start + (end - start) * factor
 

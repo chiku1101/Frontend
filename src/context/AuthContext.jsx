@@ -1,114 +1,71 @@
-import React from 'react';
-import { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { apiPost, apiGet } from '../utils/api';
 
-const AuthContext = createContext();
-
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(false);
-  
-  // Phone Number Sign In
-  const sendOtp = async (phoneNumber) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const login = async (email, password) => {
     try {
-      setLoading(true);
-      // TODO: Replace with your backend API call
-      const response = await fetch('/api/auth/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber: `+91${phoneNumber}` })
-      });
-      
-      if (!response.ok) throw new Error('Failed to send OTP');
-      return await response.json();
-    } catch (error) {
-      console.error('Error sending OTP:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  // Verify OTP
-  const verifyOtp = async (phoneNumber, otp) => {
-    try {
-      setLoading(true);
-      // TODO: Replace with your backend API call
-      const response = await fetch('/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber: `+91${phoneNumber}`, otp })
-      });
-      
-      if (!response.ok) throw new Error('Invalid OTP');
-      
-      const userData = await response.json();
-      setCurrentUser(userData);
-      return userData;
-    } catch (error) {
-      console.error('Error verifying OTP:', error);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  // Sign Out
-  const logout = async () => {
-    try {
-      setLoading(true);
-      // TODO: Replace with your backend API call
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      
-      if (!response.ok) throw new Error('Logout failed');
-      setCurrentUser(null);
-    } catch (error) {
-      console.error('Error signing out:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  useEffect(() => {
-    // Check for existing session
-    const checkAuth = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/auth/session');
-        if (response.ok) {
-          const userData = await response.json();
-          setCurrentUser(userData);
-        }
-      } catch (error) {
-        console.error('Error checking auth:', error);
-      } finally {
-        setLoading(false);
+      const response = await apiPost('/auth/login', { email, password });
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        setUser(response.user);
+        return response;
       }
-    };
-    
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+  };
+
+  const checkAuth = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      const response = await apiGet('/auth/profile');  // Removed extra 'api/'
+      if (response) {
+        setUser(response);
+      } else {
+        logout();
+      }
+    } catch (error) {
+      console.error('Auth check error:', error);
+      if (error.message.includes('Admin privileges required')) {
+        const savedUser = JSON.parse(localStorage.getItem('user') || 'null');
+        if (savedUser) {
+          setUser(savedUser);
+        }
+      } else {
+        logout();
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     checkAuth();
   }, []);
-  
-  const value = {
-    currentUser,
-    sendOtp,
-    verifyOtp,
-    logout,
-    loading
-  };
-  
+
   return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
+      {children}
     </AuthContext.Provider>
   );
 };
 
-export default AuthContext;
+export const useAuth = () => useContext(AuthContext);

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Banner = () => {
   const [currentImage, setCurrentImage] = useState(0)
+  const navigate = useNavigate()
   
   const images = [
     {
-      url: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=2070',
-      title: 'SPRING SUMMER 2025',
-      subtitle: "Your little crash-course on what's moving this season"
+      url: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=2070',
+      title: 'INDIAN WEAR',
+      subtitle: 'Explore our collection of traditional Indian wear',
+      link: '/indian-wear'
     },
     {
       url: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070',
@@ -37,7 +40,13 @@ const Banner = () => {
             className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 cursor-pointer ${
               currentImage === index ? 'opacity-100' : 'opacity-0'
             }`}
-            onClick={() => setCurrentImage(index)}
+            onClick={() => {
+              if (image.link) {
+                navigate(image.link)
+              } else {
+                setCurrentImage(index)
+              }
+            }}
             style={{
               backgroundImage: `url('${image.url}')`
             }}
@@ -72,7 +81,13 @@ const Banner = () => {
               className={`w-2 sm:w-3 h-2 sm:h-3 rounded-full transition-all cursor-pointer border border-white ${
                 currentImage === index ? 'bg-white w-4 sm:w-6' : 'bg-white/40 hover:bg-white/60'
               }`}
-              onClick={() => setCurrentImage(index)}
+              onClick={() => {
+              if (image.link) {
+                navigate(image.link)
+              } else {
+                setCurrentImage(index)
+              }
+            }}
             />
           ))}
         </div>

@@ -6,11 +6,19 @@ import FeaturedBrands from '../components/FeaturedBrands'
 
 const Home = () => {
   return (
-    <div>
+    <div className="scroll-smooth">
       <Banner />
-      <Categories />
-      <TrendingCategories />
-      <FeaturedBrands />
+      <div className="categories-section">
+        <Categories />
+      </div>
+      
+      <div className="trending-overlay">
+        <TrendingCategories />
+      </div>
+      
+      <div className="featured-overlay">
+        <FeaturedBrands />
+      </div>
     </div>
   )
 }

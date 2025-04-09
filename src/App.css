@@ -3,6 +3,7 @@
   margin: 0;
   padding: 0;
   text-align: left;
+  overflow: visible;
 }
 
 .logo {
@@ -27,6 +28,21 @@
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s forwards;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
@@ -39,4 +55,53 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Parallax scrolling effect styles */
+.trending-overlay {
+  width: 100%;
+  height: auto;
+  margin-top: -4rem;
+  will-change: transform;
+  box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+  position: relative;
+  opacity: 1;
+  z-index: 10;
+  pointer-events: all;
+}
+
+.featured-overlay {
+  z-index: 15;
+}
+
+.trending-section section,
+.featured-section section {
+  min-height: 100vh;
+  opacity: 1 !important;
+}
+
+.categories-section {
+  position: relative;
+  z-index: 5;
+  background-color: white;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  min-height: 100vh;
+  overflow: visible;
+}
+
+/* Make sure body always extends fully */
+body, html {
+  overflow-x: visible;
+  overflow-y: visible;
+  height: auto;
+  min-height: 100%;
+}
+
+/* Custom scroll styling */
+.gsap-marker-scroller-start,
+.gsap-marker-scroller-end {
+  padding: 3px 5px;
+  margin: 5px;
+  border-radius: 3px;
 }
