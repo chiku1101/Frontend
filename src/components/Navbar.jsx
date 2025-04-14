@@ -7,7 +7,8 @@ import { useAuth } from '../context/AuthContext'
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { getCartCount } = useCart()
-  const { currentUser, logout } = useAuth()
+  // Update the destructuring at the top
+  const { user, logout } = useAuth()  // Change currentUser to user
 
   const handleLogout = async () => {
     try {
@@ -59,12 +60,17 @@ const Navbar = () => {
                 />
               </div>
               <div className="hidden sm:flex items-center space-x-6 lg:space-x-8">
-                {currentUser ? (
+                {user ? (
                   <div className="flex items-center gap-6">
-                    <span className="flex items-center gap-1.5 text-gray-700">
+                    <Link 
+                      to="/profile"
+                      className="flex items-center gap-1.5 text-gray-700 hover:text-[#e80071] transition-colors duration-200"
+                    >
                       <User size={18} className="text-gray-600" />
-                      <span className="text-sm font-medium">{currentUser.name}</span>
-                    </span>
+                      <span className="text-sm font-medium">
+                        {user.name || user.email}
+                      </span>
+                    </Link>
                     <button
                       onClick={handleLogout}
                       className="flex items-center gap-1.5 text-gray-700 hover:text-[#e80071] transition-colors duration-200"
@@ -123,18 +129,17 @@ const Navbar = () => {
                 <Link to="/brands" className="text-gray-700 hover:text-[#e80071] transition-colors duration-200 text-sm font-medium">All Brands</Link>
                 <Link to="/more" className="text-gray-700 hover:text-[#e80071] transition-colors duration-200 text-sm font-medium">More</Link>
                 <div className="flex space-x-6 pt-4 border-t border-gray-100 mt-2">
-                  {currentUser ? (
+                  {user ? (
                     <div className="flex items-center gap-6">
-                      <span className="flex items-center gap-1.5 text-gray-700">
+                      <Link 
+                        to="/profile"
+                        className="flex items-center gap-1.5 text-gray-700 hover:text-[#e80071] transition-colors duration-200"
+                      >
                         <User size={18} className="text-gray-600" />
-                        // In your navbar component where the user name is displayed
-                        <Link 
-                          to="/profile"
-                          className="flex items-center space-x-1 hover:text-[#e80071] transition-colors duration-200"
-                        >
-                          <span>{user.name}</span>
-                        </Link>
-                      </span>
+                        <span className="text-sm font-medium">
+                          {user.name || user.email}
+                        </span>
+                      </Link>
                       <button
                         onClick={handleLogout}
                         className="flex items-center gap-1.5 text-gray-700 hover:text-[#e80071] transition-colors duration-200"

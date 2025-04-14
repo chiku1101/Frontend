@@ -9,7 +9,6 @@ const api = axios.create({
   },
 });
 
-// Add request interceptor to include token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -18,36 +17,34 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const apiPost = async (endpoint, data) => {
+export const apiGet = async (endpoint) => {
   try {
-    // Make sure endpoint starts with /
-    const formattedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-    const response = await api.post(formattedEndpoint, data);
+    const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
     console.error('API Error:', error.response || error);
-    if (error.response) {
-      const message = error.response.data?.message || `Request failed with status ${error.response.status}`;
-      throw new Error(message);
-    } else if (error.request) {
-      throw new Error('Network error - please check your connection');
-    } else {
-      throw new Error('Request configuration error');
-    }
+    throw new Error(error.response?.data?.message || 'API request failed');
   }
 };
 
-export const apiGet = async (endpoint) => {
+export const apiPost = async (endpoint, data) => {
   try {
-    // Use axios instance instead of fetch
     const formattedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-    const response = await api.get(formattedEndpoint);
+    console.log('Making request to:', API_BASE_URL + formattedEndpoint);
+    console.log('With data:', data);
+    
+    const response = await api.post(formattedEndpoint, data);
+    console.log('Response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('API Error:', error.response || error);
+    console.error('Detailed API Error:', {
+      message: error.response?.data?.message,
+      status: error.response?.status,
+      data: error.response?.data
+    });
+    
     if (error.response) {
-      const message = error.response.data?.message || `Request failed with status ${error.response.status}`;
-      throw new Error(message);
+      throw new Error(error.response.data?.message || `Request failed with status ${error.response.status}`);
     } else if (error.request) {
       throw new Error('Network error - please check your connection');
     } else {
